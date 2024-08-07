@@ -58,7 +58,7 @@
           "Users"
         ],
         "summary": "Create new user",
-        "description": "Create a new user!!",
+        "description": "Create a new user!!</br> - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]",
         "parameters": [
           {
             "name": "body",
@@ -116,7 +116,7 @@
               "properties": {
                 "error": {
                   "type": "boolean",
-                  "example": true
+                  "example": false
                 },
                 "message": {
                   "type": "string",
@@ -171,35 +171,127 @@
           "400": {
             "description": "Bad Request invalid id...",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Error"
-              },
-              "xml": {
-                "name": "main"
-              }
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "User not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update a user",
+        "description": "Update a user by id!!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "testuser"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "test@test.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Password1?"
+                },
+                "firstName": {
+                  "type": "string",
+                  "example": "firstname"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "lastname"
+                },
+                "isActive": {
+                  "type": "string",
+                  "example": "true"
+                },
+                "isStaff": {
+                  "type": "string",
+                  "example": "false"
+                },
+                "isAdmin": {
+                  "type": "string",
+                  "example": "false"
+                }
+              },
+              "required": [
+                "username",
+                "email",
+                "password"
+              ]
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "202": {
+            "description": "Update is successfull!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "User is  !"
+                },
+                "result": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - username,email and password fields are required!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "User not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - user found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "delete": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user",
+        "description": "Delete a user by id!",
         "parameters": [
           {
             "name": "id",
@@ -209,13 +301,217 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "204": {
+            "description": "User is deleted successfully!"
+          },
+          "400": {
+            "description": "Bad Request - invalid id!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "User not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - user found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "patch": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "summary": "Partially Update a user",
+        "description": "Partially Update a user by id!! Provide at least one field!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "testuser"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "test@test.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Password1?"
+                },
+                "firstName": {
+                  "type": "string",
+                  "example": "firstname"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "lastname"
+                },
+                "isActive": {
+                  "type": "string",
+                  "example": "true"
+                },
+                "isStaff": {
+                  "type": "string",
+                  "example": "false"
+                },
+                "isAdmin": {
+                  "type": "string",
+                  "example": "false"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Partially update is successfull!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "User is partially updated!"
+                },
+                "result": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - at least one field is required!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "User not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - user found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/tokens/": {
+      "get": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "List Tokens",
+        "description": "  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Create new token",
+        "description": "Create a new token!!",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "2ba29981b016f7cbf62faf15e3cb256c1104b9f9c5323c37"
+                }
+              },
+              "required": [
+                "userId",
+                "token"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Added a new token...",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Token is created!"
+                },
+                "result": {
+                  "$ref": "#/definitions/Token"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- tokenname,email and password fields are required! </br>- Invalid userId type (object id)!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "User not found on Users!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/tokens/{id}": {
+      "get": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Get a token",
+        "description": "Get a token by id!!",
         "parameters": [
           {
             "name": "id",
@@ -225,8 +521,1017 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Added a new token...",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Token"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request invalid id",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Token not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Update a token",
+        "description": "Update a token by id!!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "2ba29981b016f7cbf62faf15e3cb256c1104b9f9c5323c37"
+                }
+              },
+              "required": [
+                "userId",
+                "token"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Update is successfull!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Token is  !"
+                },
+                "result": {
+                  "$ref": "#/definitions/Token"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- invalid id type!</br>- tokenname,email and password fields are required!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not Found</br>- Token not found!</br>- User not found on Users!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - token found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Delete a token",
+        "description": "Delete a token by id!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Token is deleted successfully!"
+          },
+          "400": {
+            "description": "Bad Request - invalid id type!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Token not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - token found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Partially Update a token",
+        "description": "Partially Update a token by id!! Provide at least one field!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "2ba29981b016f7cbf62faf15e3cb256c1104b9f9c5323c37"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Partially update is successfull!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Token is partially updated!"
+                },
+                "result": {
+                  "$ref": "#/definitions/Token"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- invalid id type!</br>- at least one field is required!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not Found</br>- Token not found!</br>- User not found on Users!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - token found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/cars/": {
+      "get": {
+        "tags": [
+          "Cars"
+        ],
+        "summary": "List Cars",
+        "description": "  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cars"
+        ],
+        "summary": "Create new car",
+        "description": "Create a new car!!</br>- year must be between min 2000 to max current year",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "plateNumber": {
+                  "type": "string",
+                  "example": "10ua4345"
+                },
+                "brand": {
+                  "type": "string",
+                  "example": "Toyota"
+                },
+                "model": {
+                  "type": "string",
+                  "example": "Corolla"
+                },
+                "year": {
+                  "type": "number",
+                  "example": 2020
+                },
+                "pricePerDay": {
+                  "type": "number",
+                  "example": 200
+                },
+                "": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "updatedId": {
+                  "type": "string",
+                  "example": "56b1erfehe90856633456786"
+                },
+                "isAutomatic": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "required": [
+                "plateNumber",
+                "brand",
+                "model",
+                "year",
+                "pricePerDay",
+                "",
+                "updatedId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Added a new car...",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Car is  !"
+                },
+                "result": {
+                  "$ref": "#/definitions/Car"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required! </br>- Invalid  , updatedId type (object id)!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "createdId or updatedId not found on Users!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/cars/{id}": {
+      "get": {
+        "tags": [
+          "Cars"
+        ],
+        "summary": "Get a car",
+        "description": "Get a car by id!!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Added a new car...",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Car"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request invalid id",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Car not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Cars"
+        ],
+        "summary": "Update a car",
+        "description": "Update a car by id!!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "plateNumber": {
+                  "type": "string",
+                  "example": "10ua4345"
+                },
+                "brand": {
+                  "type": "string",
+                  "example": "Toyota"
+                },
+                "model": {
+                  "type": "string",
+                  "example": "Corolla"
+                },
+                "year": {
+                  "type": "number",
+                  "example": 2020
+                },
+                "pricePerDay": {
+                  "type": "number",
+                  "example": 200
+                },
+                "createdId": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "": {
+                  "type": "string",
+                  "example": "56b1erfehe90856633456786"
+                },
+                "isAutomatic": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "required": [
+                "plateNumber",
+                "brand",
+                "model",
+                "year",
+                "pricePerDay",
+                "createdId",
+                ""
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Update is successfull!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Car is  !"
+                },
+                "result": {
+                  "$ref": "#/definitions/Car"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required! </br>- Invalid id, createdId, updatedId type (object id)!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not Found</br>- createdId or   not found on Users!</br>- Car not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - car found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cars"
+        ],
+        "summary": "Delete a car",
+        "description": "Delete a car by id!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Car is deleted successfully!"
+          },
+          "400": {
+            "description": "Bad Request - invalid id type!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Car not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - car found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Cars"
+        ],
+        "summary": "Partially Update a car",
+        "description": "Partially Update a car by id!! Provide at least one field!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "plateNumber": {
+                  "type": "string",
+                  "example": "10ua4345"
+                },
+                "brand": {
+                  "type": "string",
+                  "example": "Toyota"
+                },
+                "model": {
+                  "type": "string",
+                  "example": "Corolla"
+                },
+                "year": {
+                  "type": "number",
+                  "example": 2020
+                },
+                "pricePerDay": {
+                  "type": "number",
+                  "example": 200
+                },
+                "createdId": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "updatedId": {
+                  "type": "string",
+                  "example": "56b1erfehe90856633456786"
+                },
+                "isAutomatic": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Partially update is successfull!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Car is partially updated!"
+                },
+                "result": {
+                  "$ref": "#/definitions/Car"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- At least on field is required! - plateNumber, brand, model, year, isAutomatic, pricePerDay, createdId, updatedId! </br>- Invalid id, createdId, updatedId type (object id)!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not Found</br>- createdId or updatedId not found on Users!</br>- Car not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - car found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/reservations/": {
+      "get": {
+        "tags": [
+          "Reservations"
+        ],
+        "summary": "List Reservations",
+        "description": "  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Reservations"
+        ],
+        "summary": "Create new reservation",
+        "description": "Create a new reservation!!</br>- year must be between min 2000 to max current year",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "plateNumber": {
+                  "type": "string",
+                  "example": "10ua4345"
+                },
+                "brand": {
+                  "type": "string",
+                  "example": "Toyota"
+                },
+                "model": {
+                  "type": "string",
+                  "example": "Corolla"
+                },
+                "year": {
+                  "type": "number",
+                  "example": 2020
+                },
+                "pricePerDay": {
+                  "type": "number",
+                  "example": 200
+                },
+                "": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "updatedId": {
+                  "type": "string",
+                  "example": "56b1erfehe90856633456786"
+                },
+                "isAutomatic": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "required": [
+                "plateNumber",
+                "brand",
+                "model",
+                "year",
+                "pricePerDay",
+                "",
+                "updatedId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Added a new reservation...",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Reservation is  !"
+                },
+                "result": {
+                  "$ref": "#/definitions/Reservation"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required! </br>- Invalid  , updatedId type (object id)!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "createdId or updatedId not found on Users!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/reservations/{id}": {
+      "get": {
+        "tags": [
+          "Reservations"
+        ],
+        "summary": "Get a reservation",
+        "description": "Get a reservation by id!!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Added a new reservation...",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Reservation"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request invalid id",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Reservation not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Reservations"
+        ],
+        "summary": "Update a reservation",
+        "description": "Update a reservation by id!!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "plateNumber": {
+                  "type": "string",
+                  "example": "10ua4345"
+                },
+                "brand": {
+                  "type": "string",
+                  "example": "Toyota"
+                },
+                "model": {
+                  "type": "string",
+                  "example": "Corolla"
+                },
+                "year": {
+                  "type": "number",
+                  "example": 2020
+                },
+                "pricePerDay": {
+                  "type": "number",
+                  "example": 200
+                },
+                "createdId": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "": {
+                  "type": "string",
+                  "example": "56b1erfehe90856633456786"
+                },
+                "isAutomatic": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "required": [
+                "plateNumber",
+                "brand",
+                "model",
+                "year",
+                "pricePerDay",
+                "createdId",
+                ""
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Update is successfull!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Reservation is  !"
+                },
+                "result": {
+                  "$ref": "#/definitions/Reservation"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required! </br>- Invalid id, createdId, updatedId type (object id)!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not Found</br>- createdId or   not found on Users!</br>- Reservation not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - reservation found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Reservations"
+        ],
+        "summary": "Delete a reservation",
+        "description": "Delete a reservation by id!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Reservation is deleted successfully!"
+          },
+          "400": {
+            "description": "Bad Request - invalid id type!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Reservation not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - reservation found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Reservations"
+        ],
+        "summary": "Partially Update a reservation",
+        "description": "Partially Update a reservation by id!! Provide at least one field!",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "plateNumber": {
+                  "type": "string",
+                  "example": "10ua4345"
+                },
+                "brand": {
+                  "type": "string",
+                  "example": "Toyota"
+                },
+                "model": {
+                  "type": "string",
+                  "example": "Corolla"
+                },
+                "year": {
+                  "type": "number",
+                  "example": 2020
+                },
+                "pricePerDay": {
+                  "type": "number",
+                  "example": 200
+                },
+                "createdId": {
+                  "type": "string",
+                  "example": "66b1eacece90856636455955"
+                },
+                "updatedId": {
+                  "type": "string",
+                  "example": "56b1erfehe90856633456786"
+                },
+                "isAutomatic": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Partially update is successfull!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Reservation is partially updated!"
+                },
+                "result": {
+                  "$ref": "#/definitions/Reservation"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request </br>- At least on field is required! - plateNumber, brand, model, year, isAutomatic, pricePerDay, createdId, updatedId! </br>- Invalid id, createdId, updatedId type (object id)!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not Found</br>- createdId or updatedId not found on Users!</br>- Reservation not found!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Something went wrong - reservation found on db but it couldn't be updated!",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -365,6 +1670,192 @@
             "default": {
               "type": "boolean",
               "example": false
+            }
+          }
+        }
+      }
+    },
+    "Token": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "User"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            },
+            "index": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "token": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            },
+            "index": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        }
+      }
+    },
+    "Car": {
+      "type": "object",
+      "properties": {
+        "plateNumber": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "brand": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "year": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "min": {
+              "type": "number",
+              "example": 2000
+            },
+            "max": {
+              "type": "number",
+              "example": 2024
+            }
+          }
+        },
+        "isAutomatic": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "default": {
+              "type": "boolean",
+              "example": false
+            }
+          }
+        },
+        "pricePerDay": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "createdId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "User"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "updatedId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "User"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
             }
           }
         }

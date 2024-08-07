@@ -40,6 +40,8 @@ const document = {
   security: [{ Token: [] }, { Bearer: [] }],
   definitions: {
     User: require("./src/models/userModel").User.schema.obj,
+    Token: require("./src/models/tokenModel").Token.schema.obj,
+    Car: require("./src/models/carModel").Car.schema.obj,
     Error: {
       error: "true",
       message: "error message",

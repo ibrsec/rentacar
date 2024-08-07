@@ -2,15 +2,15 @@
 
 const router = require("express").Router();
 // -----------------------------------------
-const { user } = require("../controllers/userControllers");
+const { car } = require("../controllers/carControllers");
 // -----------------------------------------
-router.route("/").get(user.list).post(user.create);
+router.route("/").get(car.list).post(car.create);
 router
   .route("/:id")
-  .get(user.read)
-  .put(user.update)
-  .patch(user.patchUpdate)
-  .delete(user.delete);
+  .get(car.read)
+  .put(car.update)
+  .patch(car.patchUpdate)
+  .delete(car.delete);
 
 // -----------------------------------------
 module.exports = router;

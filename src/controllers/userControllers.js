@@ -32,7 +32,7 @@ module.exports.user = {
     /*
         #swagger.tags = ["Users"]
         #swagger.summary = "Create new user"
-        #swagger.description = "Create a new user!!"
+        #swagger.description = "Create a new user!!</br> - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]"
         #swagger.parameters['body'] = {
             in: 'body',
             required: true,
@@ -102,7 +102,12 @@ module.exports.user = {
             }   
             #swagger.responses[400] = {
                 description: 'Bad Request invalid id...',
-                schema: [{ $ref: '#/definitions/Error' }]
+                schema: { $ref: '#/definitions/Error' }
+
+            }
+            #swagger.responses[404] = {
+                description: 'User not found!',
+                schema: { $ref: '#/definitions/Error' }
 
             }
     
@@ -112,14 +117,266 @@ module.exports.user = {
       throw new Error("Invalid objectId type!");
     }
     const user = await User.findOne({ _id: req.params.id });
-    
+    if (!user) {
+      throw new CustomError("User not found!", 404);
+    }
     res.status(200).json({
       error: false,
       message: "User is found!",
       result: user,
     });
   },
-  update: async (req, res) => {},
-  patchUpdate: async (req, res) => {},
-  delete: async (req, res) => {},
+  update: async (req, res) => {
+    /*
+        #swagger.tags = ["Users"]
+        #swagger.summary = "Update a user"
+        #swagger.description = "Update a user by id!!"
+        #swagger.parameters['body'] = {
+            in: 'body',
+            required: true,
+            schema: { 
+                $username: 'testuser',
+                $email: 'test@test.com',
+                $password: 'Password1?',
+                firstName: 'firstname',
+                lastName: 'lastname',
+                isActive:'true',
+                isStaff:'false',
+                isAdmin:'false'
+            
+            }
+        }
+        #swagger.responses[202] = {
+            description: 'Update is successfull!',
+            schema: { 
+                error: false,
+                message: "User is updated!",
+                result:{$ref: '#/definitions/User'} 
+            }
+
+        }  
+        #swagger.responses[400] = {
+                description: 'Bad Request - invalid id...',
+                schema: { $ref: '#/definitions/Error' }
+
+        }
+        #swagger.responses[400] = {
+            description: 'Bad Request - username,email and password fields are required!',
+            schema: { $ref: '#/definitions/Error' }
+
+        }
+        #swagger.responses[404] = {
+            description: 'User not found!',
+            schema: { $ref: '#/definitions/Error' }
+
+        }
+        #swagger.responses[500] = {
+            description: 'Something went wrong - user found on db but it couldn\'t be updated!',
+            schema: { $ref: '#/definitions/Error' }
+
+        }
+
+
+     */
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(400);
+      throw new Error("Invalid objectId type!");
+    }
+
+    const {
+      username,
+      password,
+      email,
+      firstName,
+      lastName,
+      isActive,
+      isAdmin,
+      isStaff,
+    } = req.body;
+    if (!username || !email || !password) {
+      throw new CustomError(
+        "username,email and password fields are required!",
+        400
+      );
+    }
+
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+      throw new CustomError("User not found!", 404);
+    }
+
+    const { modifiedCount } = await User.updateOne(
+      { _id: req.params.id },
+      req.body,
+      { runValidators: true }
+    );
+    if (modifiedCount < 1) {
+      throw new CustomError(
+        "Something went wrong - issue at the end of the process!",
+        500
+      );
+    }
+
+    res.status(202).json({
+      error: false,
+      message: "User is updated!",
+      result: await User.findOne({ _id: req.params.id }),
+    });
+  },
+  patchUpdate: async (req, res) => {
+    /*
+        #swagger.tags = ["Users"]
+        #swagger.summary = "Partially Update a user"
+        #swagger.description = "Partially Update a user by id!! Provide at least one field!"
+        #swagger.parameters['body'] = {
+            in: 'body',
+            required: true,
+            schema: { 
+                username: 'testuser',
+                email: 'test@test.com',
+                password: 'Password1?',
+                firstName: 'firstname',
+                lastName: 'lastname',
+                isActive:'true',
+                isStaff:'false',
+                isAdmin:'false'
+            
+            }
+        }
+        #swagger.responses[202] = {
+            description: 'Partially update is successfull!',
+            schema: { 
+                error: false,
+                message: "User is partially updated!",
+                result:{$ref: '#/definitions/User'} 
+            }
+
+        }  
+        #swagger.responses[400] = {
+                description: 'Bad Request - invalid id...',
+                schema: { $ref: '#/definitions/Error' }
+
+        }
+        #swagger.responses[400] = {
+            description: 'Bad Request - at least one field is required!',
+            schema: { $ref: '#/definitions/Error' }
+
+        }
+        #swagger.responses[404] = {
+            description: 'User not found!',
+            schema: { $ref: '#/definitions/Error' }
+
+        }
+        #swagger.responses[500] = {
+            description: 'Something went wrong - user found on db but it couldn\'t be updated!',
+            schema: { $ref: '#/definitions/Error' }
+
+        }
+
+
+     */
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(400);
+      throw new Error("Invalid objectId type!");
+    }
+
+    const {
+      username,
+      password,
+      email,
+      firstName,
+      lastName,
+      isActive,
+      isAdmin,
+      isStaff,
+    } = req.body;
+    if (
+      !(
+        username ||
+        email ||
+        password ||
+        firstName ||
+        lastName ||
+        isActive ||
+        isStaff ||
+        isAdmin
+      )
+    ) {
+      throw new CustomError(
+        "At least one field is required - username, password, email, firstName, lastName, isActive, isAdmin, isStaff",
+        400
+      );
+    }
+
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+      throw new CustomError("User not found!", 404);
+    }
+
+    const { modifiedCount } = await User.updateOne(
+      { _id: req.params.id },
+      req.body,
+      { runValidators: true }
+    );
+    if (modifiedCount < 1) {
+      throw new CustomError(
+        "Something went wrong - issue at the end of the process!",
+        500
+      );
+    }
+
+    res.status(202).json({
+      error: false,
+      message: "User is partially updated!",
+      result: await User.findOne({ _id: req.params.id }),
+    });
+  },
+  delete: async (req, res) => {
+    /*
+        #swagger.tags = ["Users"]
+        #swagger.summary = "Delete a user"
+        #swagger.description = "Delete a user by id!"
+        
+        #swagger.responses[204] = {
+            description: 'User is deleted successfully!',
+            
+        }  
+        #swagger.responses[400] = {
+                description: 'Bad Request - invalid id!',
+                schema: { $ref: '#/definitions/Error' }
+
+        } 
+        #swagger.responses[404] = {
+            description: 'User not found!',
+            schema: { $ref: '#/definitions/Error' }
+
+        }
+        #swagger.responses[500] = {
+            description: 'Something went wrong - user found on db but it couldn\'t be updated!',
+            schema: { $ref: '#/definitions/Error' }
+
+        }
+
+
+     */
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      throw new CustomError("Invalid objectId type!", 400);
+    }
+
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+      throw new CustomError("User not found!", 404);
+    }
+
+    const { deletedCount } = await User.deleteOne({ _id: req.params.id });
+    if (deletedCount < 1) {
+      throw new CustomError(
+        "Something went wrong - issue at the end of the process!!",
+        500
+      );
+    }
+
+    res.sendStatus(204);
+  },
 };

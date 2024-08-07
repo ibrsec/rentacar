@@ -49,6 +49,14 @@ app.use('/',require('./src/routes/indexRoutes'))
 //tokens
 //auth
 
+//not found route
+app.use('*',(req,res)=>{
+    res.status(400).send({
+        error:true,
+        message:'Route not found!'
+    })
+})
+
 
 //errorhandler
 app.use(require('./src/middlewares/errorHandler'))
@@ -76,3 +84,8 @@ app.listen(PORT,()=>console.log('Server is running on: ',PORT));
 
 
 //permissionlardan sonra user admin staff restrictleri ayarlayacaz
+//, normal reservation crudlari bitir sonra reservation ozel  islemlerini bitir
+        //readme ye bak
+        // sonra auth routeu bitir
+        // sonra authentication ve token islemleri
+        // sonra admin staf normal user restrictionslar kafa yorulacak
