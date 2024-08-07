@@ -42,6 +42,7 @@ const document = {
     User: require("./src/models/userModel").User.schema.obj,
     Token: require("./src/models/tokenModel").Token.schema.obj,
     Car: require("./src/models/carModel").Car.schema.obj,
+    Reservation: require("./src/models/reservationModel").Reservation.schema.obj,
     Error: {
       error: "true",
       message: "error message",

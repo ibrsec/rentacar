@@ -45,6 +45,8 @@ module.exports.car = {
                 $pricePerDay: 200,
                 $createdId: '66b1eacece90856636455955',
                 $updatedId: '56b1erfehe90856633456786',
+                isAvaliable:true,
+                images: ['img1','img2'],
                 isAutomatic:false
             }
         }
@@ -78,6 +80,8 @@ module.exports.car = {
       year,
       isAutomatic,
       pricePerDay,
+      isAvaliable,
+      images,
       createdId,
       updatedId,
     } = req.body;
@@ -171,6 +175,8 @@ module.exports.car = {
                 $pricePerDay: 200,
                 $createdId: '66b1eacece90856636455955',
                 $updatedId: '56b1erfehe90856633456786',
+                isAvaliable:true,
+                images: ['img1','img2'],
                 isAutomatic:false
             }
         }
@@ -288,6 +294,8 @@ module.exports.car = {
                 pricePerDay: 200,
                 createdId: '66b1eacece90856636455955',
                 updatedId: '56b1erfehe90856633456786',
+                isAvaliable:true,
+                images: ['img1','img2'],
                 isAutomatic:false
             
             }
@@ -331,6 +339,8 @@ module.exports.car = {
       year,
       isAutomatic,
       pricePerDay,
+      isAvaliable,
+      images,
       createdId,
       updatedId,
     } = req.body;
@@ -343,7 +353,9 @@ module.exports.car = {
         pricePerDay ||
         createdId ||
         updatedId ||
-        isAutomatic
+        isAutomatic ||
+        images ||
+        isAvaliable
       )
     ) {
       throw new CustomError(

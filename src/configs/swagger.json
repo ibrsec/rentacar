@@ -795,6 +795,20 @@
                   "type": "string",
                   "example": "56b1erfehe90856633456786"
                 },
+                "isAvaliable": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "images": {
+                  "type": "array",
+                  "example": [
+                    "img1",
+                    "img2"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "isAutomatic": {
                   "type": "boolean",
                   "example": false
@@ -939,6 +953,20 @@
                 "": {
                   "type": "string",
                   "example": "56b1erfehe90856633456786"
+                },
+                "isAvaliable": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "images": {
+                  "type": "array",
+                  "example": [
+                    "img1",
+                    "img2"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "isAutomatic": {
                   "type": "boolean",
@@ -1085,6 +1113,20 @@
                 "updatedId": {
                   "type": "string",
                   "example": "56b1erfehe90856633456786"
+                },
+                "isAvaliable": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "images": {
+                  "type": "array",
+                  "example": [
+                    "img1",
+                    "img2"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "isAutomatic": {
                   "type": "boolean",
@@ -1816,6 +1858,142 @@
           }
         },
         "pricePerDay": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "images": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "array",
+              "example": [
+                null
+              ],
+              "items": {
+                "type": "function"
+              }
+            },
+            "default": {
+              "type": "array",
+              "example": [],
+              "items": {}
+            }
+          }
+        },
+        "isAvaliable": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "default": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "createdId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "User"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "updatedId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "User"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        }
+      }
+    },
+    "Reservation": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "User"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "carId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "Car"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "startDate": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "endDate": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "amount": {
           "type": "object",
           "properties": {
             "type": {

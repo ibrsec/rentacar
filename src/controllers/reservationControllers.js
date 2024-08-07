@@ -2,6 +2,7 @@
 
 const { mongoose } = require("../configs/dbConnection");
 const CustomError = require("../errors/customError");
+const { Car } = require("../models/carModel");
 const { Reservation } = require("../models/reservationModel");
 const { User } = require("../models/userModel");
 
@@ -72,30 +73,52 @@ module.exports.reservation = {
 
      */
 
-
-        
-    const {
-      userId,
-      carId,
-      startDate,
-      enddate,
-      amount,
-      createdId,
-      updatedId,
-    } = req.body;
+    const { userId, carId, startDate, endDate, amount, createdId, updatedId } =
+      req.body;
     if (
       !userId ||
       !carId ||
       !startDate ||
-      !enddate ||
-      !amount ||
+      !endDate ||
       !createdId ||
       !updatedId
     ) {
       throw new CustomError(
-        "plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required!",
+        "userId, carId, startDate, enddate, createdId, updatedId fields are required!",
         400
       );
+    }
+
+    console.log('startDate', startDate, typeof startDate)
+    console.log('endDate', endDate, typeof endDate)
+
+    //date validation checks
+    const sdate = new Date(startDate); 
+    const edate = new Date(endDate); 
+    console.log('sDate', sdate, typeof sdate)
+    console.log('eDate', edate, typeof edate)
+
+    //1- sdate < currenttime
+    if(sdate < new Date()){
+      throw new CustomError('Start date cant be less than current date!')
+    }
+    //2- sdate >= edate
+    if(sdate >= edate){
+      throw new CustomError('Start date cant be less than or equal to end date!')
+    }
+    
+   
+   
+
+
+
+
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      throw new CustomError("Invalid userId type (object id)!", 400);
+    }
+    if (!mongoose.Types.ObjectId.isValid(carId)) {
+      throw new CustomError("Invalid carId type (object id)!", 400);
     }
 
     if (!mongoose.Types.ObjectId.isValid(createdId)) {
@@ -103,6 +126,21 @@ module.exports.reservation = {
     }
     if (!mongoose.Types.ObjectId.isValid(updatedId)) {
       throw new CustomError("Invalid updatedId type (object id)!", 400);
+    }
+
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      throw new CustomError("userId not found on Users!", 404);
+    }
+
+    const car = await Car.findOne({ _id: carId });
+    if (!car) {
+      throw new CustomError("carId not found on Users!", 404);
+    }
+
+    console.log('car', car)
+    if (!car.isAvaliable) {
+      throw new CustomError("Selected car is not avaliable!?", 400);
     }
 
     const userCreated = await User.findOne({ _id: createdId });
@@ -113,6 +151,80 @@ module.exports.reservation = {
     if (!userUpdated) {
       throw new CustomError("updatedId not found on Users!", 404);
     }
+
+    //MUSTERILER ---|>|
+    // Tarih aralığı belirtip müsait araç listeleyebilir. -farkli endpoint
+
+      //once-> dateler dogrumu, 
+        //end date start dateden kucukmu
+        //start date current timedan kucukmu
+    // Rezerve edilmiş bir aracı, o tarihlerde rezerve edemez.
+    // Seçilen tarih aralığında araç rezerve edilebilir, ancak aynı tarih aralığında ikinci bir araç kiralayamaz.
+
+    /*
+
+old reserv 1      :                               -----------
+old reserv 2      :                       -------------
+old reserv 3      :     -------
+old reserv 4      :               --------    
+
+new reservation   :                 ----------
+
+*/
+
+    const isAvaliableDates = await Reservation.find({
+      carId,
+      $nor: [
+        { startDate: { $gt: req.body.endDate } },
+        { endDate: { $lt: req.body.startDate } },
+      ],
+    });
+
+    
+
+    //reserved day
+    
+  
+    //if dates are not avaliable, then response that info and give the user avaliable carIds on asked dates.
+    if(isAvaliableDates.length > 0){
+
+
+      const isAvaliableDatesAllCars = await Reservation.find({
+        $nor: [
+          { startDate: { $gt: req.body.endDate } },
+          { endDate: { $lt: req.body.startDate } },
+        ],
+      });
+
+ 
+
+      const avaliableCars = await Car.find({
+        _id:{$nin: isAvaliableDatesAllCars.map(item=>item.carId)}
+      })
+      
+      const avaliableCarIds =  avaliableCars.map(item=>item._id)
+
+ 
+      res.status(400).json({
+        error:true,
+        message:'Selected car is not avaliable on selected dates!',
+        avaliableCars:{
+          message:'Avaliable cars on selected dates are listed!', 
+          result: avaliableCarIds
+        }
+      })
+      return;
+    }
+
+
+    //if dates are avaliable for asked car then make the reservation
+
+    //how many day user asked for renting the car end date - start day
+    const reservedDay = (edate - sdate) / (1000 * 60 * 60  * 24);
+
+    ///amount -> car priceperday * reservedDay
+    req.body.amount = car.pricePerDay * reservedDay;
+
 
     const newReservation = await Reservation.create(req.body);
 
@@ -436,7 +548,9 @@ module.exports.reservation = {
       throw new CustomError("Reservation not found!", 404);
     }
 
-    const { deletedCount } = await Reservation.deleteOne({ _id: req.params.id });
+    const { deletedCount } = await Reservation.deleteOne({
+      _id: req.params.id,
+    });
     if (deletedCount < 1) {
       throw new CustomError(
         "Something went wrong - issue at the end of the process!!",

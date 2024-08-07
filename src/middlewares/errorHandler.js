@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = async(err,req,res,next)=>{
+    console.log(err);
     const statusCode = err.statusCode || res.errorStatusCode || 500;
     res.status(statusCode).json({
         error:true,

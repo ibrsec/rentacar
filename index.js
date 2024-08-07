@@ -89,3 +89,8 @@ app.listen(PORT,()=>console.log('Server is running on: ',PORT));
         // sonra auth routeu bitir
         // sonra authentication ve token islemleri
         // sonra admin staf normal user restrictionslar kafa yorulacak
+
+
+        //login vs olduktan sorna reservationdaki userid ve created id vs ler ayarlanacak
+        //adminse degilse vs
+        
