@@ -10,6 +10,8 @@ module.exports.user = {
             #swagger.tags = ["Users"]
             #swagger.summary = "List Users"
             #swagger.description = `
+                Permission: <b>Loginned user</b></br> - user can access own user only</br> - admin can access all users</br></br>
+                Token endpoint is hidden </br></br>
                 You can send query with endpoint for filter[],search[], sort[], page and limit.
                 <ul> Examples:
                     <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>
@@ -20,11 +22,16 @@ module.exports.user = {
             
             `
         */
-    const users = await res.getModelList(User);
+    const customfilters = {};
+    if (!req.user.isAdmin) {
+      customfilters._id = req.user?.userId;
+    }
+
+    const users = await res.getModelList(User, customfilters);
     res.status(200).json({
       error: false,
       message: "Users are listed!",
-      details: await res.getModelListDetails(User),
+      details: await res.getModelListDetails(User, customfilters),
       result: users,
     });
   },
@@ -32,7 +39,9 @@ module.exports.user = {
     /*
         #swagger.tags = ["Users"]
         #swagger.summary = "Create new user"
-        #swagger.description = "Create a new user!!</br> - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]"
+        #swagger.description = `Create a new user!!
+                  </br> - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]"
+                  </br> - Just an Admin can create admin, staff or inActive users`
         #swagger.parameters['body'] = {
             in: 'body',
             required: true,
@@ -83,6 +92,22 @@ module.exports.user = {
       );
     }
 
+    //user level manage
+    req.body.isAdmin = false;
+    req.body.isStaff = false;
+    req.body.isActive = true;
+    if (req?.user?.isAdmin) {
+      if (isAdmin === true) {
+        req.body.isAdmin = true;
+      }
+      if (isStaff === true) {
+        req.body.isStaff = true;
+      }
+      if (isActive === false) {
+        req.body.isActive = false;
+      }
+    }
+
     const newUser = await User.create(req.body);
 
     res.status(201).json({
@@ -95,7 +120,7 @@ module.exports.user = {
     /*
             #swagger.tags = ["Users"]
             #swagger.summary = "Get a user"
-            #swagger.description = "Get a user by id!!"
+            #swagger.description = ` Permission: <b>Loginned user</b></br> - user can access own user only</br> - admin can access all users</br></br>Get a user by id!!`
             #swagger.responses[200] = {
                 description: 'Added a new user...',
                 schema: [{ $ref: '#/definitions/User' }]
@@ -112,17 +137,23 @@ module.exports.user = {
             }
     
     */
+
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       res.status(400);
       throw new Error("Invalid objectId type!");
     }
-    const user = await User.findOne({ _id: req.params.id });
+    const user = await User.findOne({
+      _id: req.user.isAdmin === true ? req.params.id : req.user?.userId,
+    });
     if (!user) {
       throw new CustomError("User not found!", 404);
     }
     res.status(200).json({
       error: false,
-      message: "User is found!",
+      message:
+        req.user.isAdmin === true
+          ? "User is found!"
+          : "User can't list the other users! Your user info is here!",
       result: user,
     });
   },
@@ -130,7 +161,7 @@ module.exports.user = {
     /*
         #swagger.tags = ["Users"]
         #swagger.summary = "Update a user"
-        #swagger.description = "Update a user by id!!"
+        #swagger.description = "Permission: <b>Admin or Staff user</b></br>- Staff users cant change admin status of a user!</br></br>Update a user by id!!"
         #swagger.parameters['body'] = {
             in: 'body',
             required: true,
@@ -200,6 +231,12 @@ module.exports.user = {
       );
     }
 
+    //if staff user try to change isAdmin of a user
+    if (isAdmin === true) {
+      if(!req.user?.isAdmin){
+        delete req.body.isAdmin
+      }
+    }
     const user = await User.findOne({ _id: req.params.id });
     if (!user) {
       throw new CustomError("User not found!", 404);
@@ -227,7 +264,7 @@ module.exports.user = {
     /*
         #swagger.tags = ["Users"]
         #swagger.summary = "Partially Update a user"
-        #swagger.description = "Partially Update a user by id!! Provide at least one field!"
+        #swagger.description = "Permission: <b>Admin or Staff user</b></br>- Staff users cant change admin status of a user!</br</br>Partially Update a user by id!! Provide at least one field!"
         #swagger.parameters['body'] = {
             in: 'body',
             required: true,
@@ -308,6 +345,15 @@ module.exports.user = {
       );
     }
 
+    //if staff user try to change isAdmin of a user
+    if (isAdmin === true) {
+      if(!req.user?.isAdmin){
+        delete req.body.isAdmin
+      }
+    }
+
+
+    
     const user = await User.findOne({ _id: req.params.id });
     if (!user) {
       throw new CustomError("User not found!", 404);
@@ -335,7 +381,7 @@ module.exports.user = {
     /*
         #swagger.tags = ["Users"]
         #swagger.summary = "Delete a user"
-        #swagger.description = "Delete a user by id!"
+        #swagger.description = "Permission: <b>Admin user</b></br></br>Delete a user by id!"
         
         #swagger.responses[204] = {
             description: 'User is deleted successfully!',

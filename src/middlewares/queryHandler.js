@@ -38,6 +38,7 @@ module.exports = (req, res, next) => {
 
     const details = {
       filter,
+      customFilters,
       search,
       sort,
       limit,

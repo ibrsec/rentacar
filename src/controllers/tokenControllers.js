@@ -8,6 +8,7 @@ const { User } = require("../models/userModel");
 module.exports.token = {
   list: async (req, res) => {
     /*
+            #swagger.ignore = true
             #swagger.tags = ["Tokens"]
             #swagger.summary = "List Tokens"
             #swagger.description = `
@@ -31,6 +32,7 @@ module.exports.token = {
   },
   create: async (req, res) => {
     /*
+        #swagger.ignore = true
         #swagger.tags = ["Tokens"]
         #swagger.summary = "Create new token"
         #swagger.description = "Create a new token!!"
@@ -89,6 +91,7 @@ module.exports.token = {
   },
   read: async (req, res) => {
     /*
+            #swagger.ignore = true
             #swagger.tags = ["Tokens"]
             #swagger.summary = "Get a token"
             #swagger.description = "Get a token by id!!"
@@ -124,6 +127,7 @@ module.exports.token = {
   },
   update: async (req, res) => {
     /*
+        #swagger.ignore = true
         #swagger.tags = ["Tokens"]
         #swagger.summary = "Update a token"
         #swagger.description = "Update a token by id!!"
@@ -207,6 +211,7 @@ module.exports.token = {
   },
   patchUpdate: async (req, res) => {
     /*
+        #swagger.ignore = true
         #swagger.tags = ["Tokens"]
         #swagger.summary = "Partially Update a token"
         #swagger.description = "Partially Update a token by id!! Provide at least one field!"
@@ -292,6 +297,7 @@ module.exports.token = {
   },
   delete: async (req, res) => {
     /*
+        #swagger.ignore = true
         #swagger.tags = ["Tokens"]
         #swagger.summary = "Delete a token"
         #swagger.description = "Delete a token by id!"

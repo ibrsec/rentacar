@@ -2,8 +2,10 @@
 
 const { mongoose } = require("../configs/dbConnection");
 const CustomError = require("../errors/customError");
+const dateValidation = require("../helpers/dateValidation");
 const { Car } = require("../models/carModel");
 const { User } = require("../models/userModel");
+const { Reservation } = require("../models/reservationModel");
 
 module.exports.car = {
   list: async (req, res) => {
@@ -11,6 +13,10 @@ module.exports.car = {
             #swagger.tags = ["Cars"]
             #swagger.summary = "List Cars"
             #swagger.description = `
+                Permission: <b>No Permission</b></br></br>
+                list the avaliable cars on selected dates -></br>
+                - query params: ...url?startDate=2024-10-11&endDate=2024-10-20
+                </br></br>
                 You can send query with endpoint for filter[],search[], sort[], page and limit.
                 <ul> Examples:
                     <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>
@@ -21,11 +27,36 @@ module.exports.car = {
             
             `
         */
-    const cars = await res.getModelList(Car);
+
+    const { startDate, endDate } = req.query;
+    const customFilter = {}
+    if (startDate && endDate) {
+      dateValidation(startDate, endDate);
+
+      customFilter.isAvaliable = true ;
+
+      const reservedCarIds = await Reservation.find(
+        {
+          startDate: { $lte: endDate },
+          endDate: { $gt: startDate },
+        },
+        {
+          _id: 0,
+          carId: 1,
+        }
+      ).distinct("carId");
+
+      customFilter._id = { $nin: reservedCarIds };
+    }
+    console.log('customFilter', customFilter)
+    const cars = await res.getModelList(Car, customFilter, [
+      { path: "createdId", select: "username" },
+      { path: "updatedId", select: "username" },
+    ]);
     res.status(200).json({
       error: false,
       message: "Cars are listed!",
-      details: await res.getModelListDetails(Car),
+      details: await res.getModelListDetails(Car,customFilter),
       result: cars,
     });
   },
@@ -33,7 +64,7 @@ module.exports.car = {
     /*
         #swagger.tags = ["Cars"]
         #swagger.summary = "Create new car"
-        #swagger.description = "Create a new car!!</br>- year must be between min 2000 to max current year"
+        #swagger.description = "Permission: <b>Admin or Staff user</b></br></br>Create a new car!!</br>- year must be between min 2000 to max current year"
         #swagger.parameters['body'] = {
             in: 'body',
             required: true,
@@ -43,8 +74,6 @@ module.exports.car = {
                 $model: 'Corolla',
                 $year: 2020,
                 $pricePerDay: 200,
-                $createdId: '66b1eacece90856636455955',
-                $updatedId: '56b1erfehe90856633456786',
                 isAvaliable:true,
                 images: ['img1','img2'],
                 isAutomatic:false
@@ -81,24 +110,23 @@ module.exports.car = {
       isAutomatic,
       pricePerDay,
       isAvaliable,
-      images,
-      createdId,
-      updatedId,
+      images, 
     } = req.body;
     if (
       !plateNumber ||
       !brand ||
       !model ||
       !year ||
-      !pricePerDay ||
-      !createdId ||
-      !updatedId
+      !pricePerDay 
     ) {
       throw new CustomError(
         "plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required!",
         400
       );
     }
+    req.body.createdId = req?.user?.userId
+    req.body.updatedId = req?.user?.userId
+    const {createdId,updatedId} = req.body
 
     if (!mongoose.Types.ObjectId.isValid(createdId)) {
       throw new CustomError("Invalid createdId type (object id)!", 400);
@@ -128,7 +156,7 @@ module.exports.car = {
     /*
             #swagger.tags = ["Cars"]
             #swagger.summary = "Get a car"
-            #swagger.description = "Get a car by id!!"
+            #swagger.description = "Permission: <b>No Permission</b></br></br>Get a car by id!!"
             #swagger.responses[200] = {
                 description: 'Added a new car...',
                 schema: [{ $ref: '#/definitions/Car' }]
@@ -163,7 +191,7 @@ module.exports.car = {
     /*
         #swagger.tags = ["Cars"]
         #swagger.summary = "Update a car"
-        #swagger.description = "Update a car by id!!"
+        #swagger.description = "Permission: <b>Admin or Staff user</b></br></br>Update a car by id!!"
         #swagger.parameters['body'] = {
             in: 'body',
             required: true,
@@ -173,8 +201,6 @@ module.exports.car = {
                 $model: 'Corolla',
                 $year: 2020,
                 $pricePerDay: 200,
-                $createdId: '66b1eacece90856636455955',
-                $updatedId: '56b1erfehe90856633456786',
                 isAvaliable:true,
                 images: ['img1','img2'],
                 isAutomatic:false
@@ -190,7 +216,7 @@ module.exports.car = {
 
         }  
         #swagger.responses[400] = {
-            description: 'Bad Request </br>- plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required! </br>- Invalid id, createdId, updatedId type (object id)!',
+            description: 'Bad Request </br>- plateNumber, brand, model, year, pricePerDay, updatedId fields are required! </br>- Invalid id, updatedId type (object id)!',
             schema: { $ref: '#/definitions/Error' }
 
         }
@@ -219,18 +245,14 @@ module.exports.car = {
       model,
       year,
       isAutomatic,
-      pricePerDay,
-      createdId,
-      updatedId,
+      pricePerDay, 
     } = req.body;
     if (
       !plateNumber ||
       !brand ||
       !model ||
       !year ||
-      !pricePerDay ||
-      !createdId ||
-      !updatedId
+      !pricePerDay  
     ) {
       throw new CustomError(
         "plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required!",
@@ -238,17 +260,16 @@ module.exports.car = {
       );
     }
 
-    if (!mongoose.Types.ObjectId.isValid(createdId)) {
-      throw new CustomError("Invalid createdId type (object id)!", 400);
-    }
+    //createdId can be set only while creating new car
+    delete req.body.createId;
+
+    req.body.updatedId = req?.user?.userId
+    const {updatedId} = req.body
+ 
     if (!mongoose.Types.ObjectId.isValid(updatedId)) {
       throw new CustomError("Invalid updatedId type (object id)!", 400);
     }
-
-    const userCreated = await User.findOne({ _id: createdId });
-    if (!userCreated) {
-      throw new CustomError("createdId not found on Users!", 404);
-    }
+ 
     const userUpdated = await User.findOne({ _id: updatedId });
     if (!userUpdated) {
       throw new CustomError("updatedId not found on Users!", 404);
@@ -282,7 +303,7 @@ module.exports.car = {
     /*
         #swagger.tags = ["Cars"]
         #swagger.summary = "Partially Update a car"
-        #swagger.description = "Partially Update a car by id!! Provide at least one field!"
+        #swagger.description = "Permission: <b>Admin or Staff user</b></br></br>Partially Update a car by id!! Provide at least one field!"
         #swagger.parameters['body'] = {
             in: 'body',
             required: true,
@@ -292,8 +313,6 @@ module.exports.car = {
                 model: 'Corolla',
                 year: 2020,
                 pricePerDay: 200,
-                createdId: '66b1eacece90856636455955',
-                updatedId: '56b1erfehe90856633456786',
                 isAvaliable:true,
                 images: ['img1','img2'],
                 isAutomatic:false
@@ -310,7 +329,7 @@ module.exports.car = {
 
         }  
         #swagger.responses[400] = {
-            description: 'Bad Request </br>- At least on field is required! - plateNumber, brand, model, year, isAutomatic, pricePerDay, createdId, updatedId! </br>- Invalid id, createdId, updatedId type (object id)!',
+            description: 'Bad Request </br>- At least on field is required! - plateNumber, brand, model, year, isAutomatic, pricePerDay, updatedId! </br>- Invalid id, updatedId type (object id)!',
             schema: { $ref: '#/definitions/Error' }
 
         }
@@ -340,9 +359,7 @@ module.exports.car = {
       isAutomatic,
       pricePerDay,
       isAvaliable,
-      images,
-      createdId,
-      updatedId,
+      images, 
     } = req.body;
     if (
       !(
@@ -350,9 +367,7 @@ module.exports.car = {
         brand ||
         model ||
         year ||
-        pricePerDay ||
-        createdId ||
-        updatedId ||
+        pricePerDay || 
         isAutomatic ||
         images ||
         isAvaliable
@@ -364,16 +379,17 @@ module.exports.car = {
       );
     }
 
-    if (createdId) {
-      if (!mongoose.Types.ObjectId.isValid(createdId)) {
-        throw new CustomError("Invalid createdId type (object id)!", 400);
-      }
 
-      const userCreated = await User.findOne({ _id: createdId });
-      if (!userCreated) {
-        throw new CustomError("createdId not found on Users!", 404);
-      }
-    }
+
+
+    //createdId can be set only while creating new car
+    delete req.body.createId;
+
+    req.body.updatedId = req?.user?.userId
+    const {updatedId} = req.body
+
+
+
     if (updatedId) {
       if (!mongoose.Types.ObjectId.isValid(updatedId)) {
         throw new CustomError("Invalid updatedId type (object id)!", 400);
@@ -412,7 +428,7 @@ module.exports.car = {
     /*
         #swagger.tags = ["Cars"]
         #swagger.summary = "Delete a car"
-        #swagger.description = "Delete a car by id!"
+        #swagger.description = "Permission: <b>Admin user</b></br></br>Delete a car by id!"
         
         #swagger.responses[204] = {
             description: 'Car is deleted successfully!',

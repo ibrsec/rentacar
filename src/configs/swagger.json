@@ -46,7 +46,14 @@
           "Users"
         ],
         "summary": "List Users",
-        "description": "  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "description": "  Permission: <b>Loginned user</b></br> - user can access own user only</br> - admin can access all users</br></br>  Token endpoint is hidden </br></br>  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -58,8 +65,13 @@
           "Users"
         ],
         "summary": "Create new user",
-        "description": "Create a new user!!</br> - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]",
+        "description": "Create a new user!!   </br> - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]\"   </br> - Just an Admin can create admin, staff or inActive users",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -146,12 +158,17 @@
           "Users"
         ],
         "summary": "Get a user",
-        "description": "Get a user by id!!",
+        "description": " Permission: <b>Loginned user</b></br> - user can access own user only</br> - admin can access all users</br></br>Get a user by id!!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -187,12 +204,17 @@
           "Users"
         ],
         "summary": "Update a user",
-        "description": "Update a user by id!!",
+        "description": "Permission: <b>Admin or Staff user</b></br>- Staff users cant change admin status of a user!</br></br>Update a user by id!!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
           {
@@ -291,12 +313,17 @@
           "Users"
         ],
         "summary": "Delete a user",
-        "description": "Delete a user by id!",
+        "description": "Permission: <b>Admin user</b></br></br>Delete a user by id!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -329,12 +356,17 @@
           "Users"
         ],
         "summary": "Partially Update a user",
-        "description": "Partially Update a user by id!! Provide at least one field!",
+        "description": "Permission: <b>Admin or Staff user</b></br>- Staff users cant change admin status of a user!</br</br>Partially Update a user by id!! Provide at least one field!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
           {
@@ -424,329 +456,30 @@
         }
       }
     },
-    "/tokens/": {
-      "get": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "List Tokens",
-        "description": "  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "Create new token",
-        "description": "Create a new token!!",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "userId": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "token": {
-                  "type": "string",
-                  "example": "2ba29981b016f7cbf62faf15e3cb256c1104b9f9c5323c37"
-                }
-              },
-              "required": [
-                "userId",
-                "token"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Added a new token...",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Token is created!"
-                },
-                "result": {
-                  "$ref": "#/definitions/Token"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request </br>- tokenname,email and password fields are required! </br>- Invalid userId type (object id)!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "User not found on Users!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/tokens/{id}": {
-      "get": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "Get a token",
-        "description": "Get a token by id!!",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Added a new token...",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Token"
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request invalid id",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Token not found!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "Update a token",
-        "description": "Update a token by id!!",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "userId": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "token": {
-                  "type": "string",
-                  "example": "2ba29981b016f7cbf62faf15e3cb256c1104b9f9c5323c37"
-                }
-              },
-              "required": [
-                "userId",
-                "token"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Update is successfull!",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Token is  !"
-                },
-                "result": {
-                  "$ref": "#/definitions/Token"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request </br>- invalid id type!</br>- tokenname,email and password fields are required!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Not Found</br>- Token not found!</br>- User not found on Users!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Something went wrong - token found on db but it couldn't be updated!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "Delete a token",
-        "description": "Delete a token by id!",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Token is deleted successfully!"
-          },
-          "400": {
-            "description": "Bad Request - invalid id type!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Token not found!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Something went wrong - token found on db but it couldn't be updated!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "Partially Update a token",
-        "description": "Partially Update a token by id!! Provide at least one field!",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "userId": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "token": {
-                  "type": "string",
-                  "example": "2ba29981b016f7cbf62faf15e3cb256c1104b9f9c5323c37"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Partially update is successfull!",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Token is partially updated!"
-                },
-                "result": {
-                  "$ref": "#/definitions/Token"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request </br>- invalid id type!</br>- at least one field is required!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Not Found</br>- Token not found!</br>- User not found on Users!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Something went wrong - token found on db but it couldn't be updated!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/cars/": {
       "get": {
         "tags": [
           "Cars"
         ],
         "summary": "List Cars",
-        "description": "  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "description": "  Permission: <b>No Permission</b></br></br>  list the avaliable cars on selected dates -></br>  - query params: ...url?startDate=2024-10-11&endDate=2024-10-20  </br></br>  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -758,8 +491,13 @@
           "Cars"
         ],
         "summary": "Create new car",
-        "description": "Create a new car!!</br>- year must be between min 2000 to max current year",
+        "description": "Permission: <b>Admin or Staff user</b></br></br>Create a new car!!</br>- year must be between min 2000 to max current year",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -787,14 +525,6 @@
                   "type": "number",
                   "example": 200
                 },
-                "": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "updatedId": {
-                  "type": "string",
-                  "example": "56b1erfehe90856633456786"
-                },
                 "isAvaliable": {
                   "type": "boolean",
                   "example": true
@@ -819,9 +549,7 @@
                 "brand",
                 "model",
                 "year",
-                "pricePerDay",
-                "",
-                "updatedId"
+                "pricePerDay"
               ]
             }
           }
@@ -870,12 +598,17 @@
           "Cars"
         ],
         "summary": "Get a car",
-        "description": "Get a car by id!!",
+        "description": "Permission: <b>No Permission</b></br></br>Get a car by id!!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -911,12 +644,17 @@
           "Cars"
         ],
         "summary": "Update a car",
-        "description": "Update a car by id!!",
+        "description": "Permission: <b>Admin or Staff user</b></br></br>Update a car by id!!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
           {
@@ -946,14 +684,6 @@
                   "type": "number",
                   "example": 200
                 },
-                "createdId": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "": {
-                  "type": "string",
-                  "example": "56b1erfehe90856633456786"
-                },
                 "isAvaliable": {
                   "type": "boolean",
                   "example": true
@@ -978,9 +708,7 @@
                 "brand",
                 "model",
                 "year",
-                "pricePerDay",
-                "createdId",
-                ""
+                "pricePerDay"
               ]
             }
           }
@@ -1009,7 +737,7 @@
             }
           },
           "400": {
-            "description": "Bad Request </br>- plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required! </br>- Invalid id, createdId, updatedId type (object id)!",
+            "description": "Bad Request </br>- plateNumber, brand, model, year, pricePerDay, updatedId fields are required! </br>- Invalid id, updatedId type (object id)!",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1033,12 +761,17 @@
           "Cars"
         ],
         "summary": "Delete a car",
-        "description": "Delete a car by id!",
+        "description": "Permission: <b>Admin user</b></br></br>Delete a car by id!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -1071,12 +804,17 @@
           "Cars"
         ],
         "summary": "Partially Update a car",
-        "description": "Partially Update a car by id!! Provide at least one field!",
+        "description": "Permission: <b>Admin or Staff user</b></br></br>Partially Update a car by id!! Provide at least one field!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
           {
@@ -1105,14 +843,6 @@
                 "pricePerDay": {
                   "type": "number",
                   "example": 200
-                },
-                "createdId": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "updatedId": {
-                  "type": "string",
-                  "example": "56b1erfehe90856633456786"
                 },
                 "isAvaliable": {
                   "type": "boolean",
@@ -1160,7 +890,7 @@
             }
           },
           "400": {
-            "description": "Bad Request </br>- At least on field is required! - plateNumber, brand, model, year, isAutomatic, pricePerDay, createdId, updatedId! </br>- Invalid id, createdId, updatedId type (object id)!",
+            "description": "Bad Request </br>- At least on field is required! - plateNumber, brand, model, year, isAutomatic, pricePerDay, updatedId! </br>- Invalid id, updatedId type (object id)!",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1186,7 +916,14 @@
           "Reservations"
         ],
         "summary": "List Reservations",
-        "description": "  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "description": "Permission: <b>Normal User</b></br></br>- Admin can list all reservation records!</br>- normal users can't list others' reservation records  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>    ",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1198,8 +935,13 @@
           "Reservations"
         ],
         "summary": "Create new reservation",
-        "description": "Create a new reservation!!</br>- year must be between min 2000 to max current year",
+        "description": "Permission: <b>Normal user</b></br></br>Create a new reservation!!</br>Customers;</br>- can select start and end date and see the list of available cars on selected dates.</br>- can not reserve cars which are reserved by other customers on selected time period.</br>- can choose a car on the list and reserve that car, but can not reserve more than one car on a selected time period,</br>- can see the list of their reservations including past ones.</br>- can list, create, read their reservations.</br>- can not update, delete reservations.</br>- amount is calculated automaticly (pricePerDay * (endData - startDate))</br></br>- Admin can create reservation for himself or other users. if admin sends a userId reservation will be   for that user, or else reservation will be   for the admin himself.</br>- normal users can create a reservation for just himselves.",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -1207,47 +949,23 @@
             "schema": {
               "type": "object",
               "properties": {
-                "plateNumber": {
-                  "type": "string",
-                  "example": "10ua4345"
-                },
-                "brand": {
-                  "type": "string",
-                  "example": "Toyota"
-                },
-                "model": {
-                  "type": "string",
-                  "example": "Corolla"
-                },
-                "year": {
-                  "type": "number",
-                  "example": 2020
-                },
-                "pricePerDay": {
-                  "type": "number",
-                  "example": 200
-                },
-                "": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "updatedId": {
+                "carId": {
                   "type": "string",
                   "example": "56b1erfehe90856633456786"
                 },
-                "isAutomatic": {
-                  "type": "boolean",
-                  "example": false
+                "startDate": {
+                  "type": "string",
+                  "example": "2024-08-26"
+                },
+                "endDate": {
+                  "type": "string",
+                  "example": "2024-08-28"
                 }
               },
               "required": [
-                "plateNumber",
-                "brand",
-                "model",
-                "year",
-                "pricePerDay",
-                "",
-                "updatedId"
+                "carId",
+                "startDate",
+                "endDate"
               ]
             }
           }
@@ -1276,13 +994,13 @@
             }
           },
           "400": {
-            "description": "Bad Request </br>- plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required! </br>- Invalid  , updatedId type (object id)!",
+            "description": "Bad Request </br>- carId, startDate, endDate fields are required! </br>- Invalid id, carId, userid type (object id)!</br>- Start date cant be less than current date!</br>- Start date cant be less than or equal to end date!</br>- Selected car is not avaliable! for renting!</br>- A reservation is exist on same dates for the user! - Choose another date!</br>- Selected car is not avaliable on selected dates! - Choose another car!! (returns avaliable Cars on asked dates)</br>",
             "schema": {
               "$ref": "#/definitions/Error"
             }
           },
           "404": {
-            "description": "createdId or updatedId not found on Users!",
+            "description": "Not Found: </br>- userId not found on Users!</br>- carId not found on Users!</br>- createdId not found on Users!</br>- updatedId not found on Users!</br>",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1296,12 +1014,17 @@
           "Reservations"
         ],
         "summary": "Get a reservation",
-        "description": "Get a reservation by id!!",
+        "description": "Permission: <b>Normal user</b></br></br>Get a reservation by id!!</br></br>- Admin can list all reservation records!</br>- normal users can't list others' reservation records",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -1319,7 +1042,7 @@
             }
           },
           "400": {
-            "description": "Bad Request invalid id",
+            "description": "Bad Request</br>- invalid id</br>-User can just see the own reservations! for listing other reservations, you must be a admin or staff user!",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1337,12 +1060,17 @@
           "Reservations"
         ],
         "summary": "Update a reservation",
-        "description": "Update a reservation by id!!",
+        "description": "Permission: <b>Admin or Staff user</b></br></br>Update a reservation by id!!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
           {
@@ -1352,47 +1080,28 @@
             "schema": {
               "type": "object",
               "properties": {
-                "plateNumber": {
-                  "type": "string",
-                  "example": "10ua4345"
-                },
-                "brand": {
-                  "type": "string",
-                  "example": "Toyota"
-                },
-                "model": {
-                  "type": "string",
-                  "example": "Corolla"
-                },
-                "year": {
-                  "type": "number",
-                  "example": 2020
-                },
-                "pricePerDay": {
-                  "type": "number",
-                  "example": 200
-                },
-                "createdId": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "": {
+                "userId": {
                   "type": "string",
                   "example": "56b1erfehe90856633456786"
                 },
-                "isAutomatic": {
-                  "type": "boolean",
-                  "example": false
+                "carId": {
+                  "type": "string",
+                  "example": "56b1erfehe90856633456786"
+                },
+                "startDate": {
+                  "type": "string",
+                  "example": "2024-08-26"
+                },
+                "endDate": {
+                  "type": "string",
+                  "example": "2024-08-28"
                 }
               },
               "required": [
-                "plateNumber",
-                "brand",
-                "model",
-                "year",
-                "pricePerDay",
-                "createdId",
-                ""
+                "userId",
+                "carId",
+                "startDate",
+                "endDate"
               ]
             }
           }
@@ -1421,13 +1130,13 @@
             }
           },
           "400": {
-            "description": "Bad Request </br>- plateNumber, brand, model, year, pricePerDay, createdId, updatedId fields are required! </br>- Invalid id, createdId, updatedId type (object id)!",
+            "description": "Bad Request </br>- userId, carId, startDate, endDate fields are required! </br>- Invalid id, carId, userid type (object id)!</br>- Start date cant be less than current date!</br>- Start date cant be less than or equal to end date!</br>- Selected car is not avaliable! for renting!</br>- Selected car is not avaliable on selected dates! - Choose another car!! (returns avaliable Cars on asked dates)",
             "schema": {
               "$ref": "#/definitions/Error"
             }
           },
           "404": {
-            "description": "Not Found</br>- createdId or   not found on Users!</br>- Reservation not found!",
+            "description": "Not Found</br>- Reservation not found!</br>- userId not found on Users!</br>carId not found on Users!</br>- createdId or   not found on Users!",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1445,12 +1154,17 @@
           "Reservations"
         ],
         "summary": "Delete a reservation",
-        "description": "Delete a reservation by id!",
+        "description": "Permission: <b>Admin user</b></br></br>Delete a reservation by id!",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -1477,18 +1191,19 @@
             }
           }
         }
-      },
-      "patch": {
+      }
+    },
+    "/auth/login": {
+      "post": {
         "tags": [
-          "Reservations"
+          "Authentication"
         ],
-        "summary": "Partially Update a reservation",
-        "description": "Partially Update a reservation by id!! Provide at least one field!",
+        "summary": "Login",
+        "description": "Login with email/username and password!",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
           {
@@ -1498,45 +1213,30 @@
             "schema": {
               "type": "object",
               "properties": {
-                "plateNumber": {
+                "username": {
                   "type": "string",
-                  "example": "10ua4345"
+                  "example": "testuser"
                 },
-                "brand": {
+                "email": {
                   "type": "string",
-                  "example": "Toyota"
+                  "example": "test@test.com"
                 },
-                "model": {
+                "password": {
                   "type": "string",
-                  "example": "Corolla"
-                },
-                "year": {
-                  "type": "number",
-                  "example": 2020
-                },
-                "pricePerDay": {
-                  "type": "number",
-                  "example": 200
-                },
-                "createdId": {
-                  "type": "string",
-                  "example": "66b1eacece90856636455955"
-                },
-                "updatedId": {
-                  "type": "string",
-                  "example": "56b1erfehe90856633456786"
-                },
-                "isAutomatic": {
-                  "type": "boolean",
-                  "example": false
+                  "example": "Password1?"
                 }
-              }
+              },
+              "required": [
+                "username",
+                "email",
+                "password"
+              ]
             }
           }
         ],
         "responses": {
-          "202": {
-            "description": "Partially update is successfull!",
+          "200": {
+            "description": "Login is OK!",
             "schema": {
               "type": "object",
               "properties": {
@@ -1546,10 +1246,29 @@
                 },
                 "message": {
                   "type": "string",
-                  "example": "Reservation is partially updated!"
+                  "example": "Login is OK!"
                 },
                 "result": {
-                  "$ref": "#/definitions/Reservation"
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "<tokenKey>"
+                    },
+                    "bearer": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "example": "<access token>"
+                        },
+                        "refreshToken": {
+                          "type": "string",
+                          "example": "<refresh token>"
+                        }
+                      }
+                    }
+                  }
                 }
               },
               "xml": {
@@ -1558,21 +1277,143 @@
             }
           },
           "400": {
-            "description": "Bad Request </br>- At least on field is required! - plateNumber, brand, model, year, isAutomatic, pricePerDay, createdId, updatedId! </br>- Invalid id, createdId, updatedId type (object id)!",
+            "description": "Bad request:  </br>- Email/username and password is required for login!  </br>- Invalid Email type - __@__.__  </br>- Invalid password type - rRules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]      "
+          },
+          "401": {
+            "description": "Unauthorized:</br> - User not found!</br>- Invalid Password!"
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh token",
+        "description": "Refresh the access token with a refresh token (bearer. )!",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/Error"
+              "type": "object",
+              "properties": {
+                "bearer": {
+                  "type": "object",
+                  "properties": {
+                    "": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmIyMmJk....."
+                    }
+                  },
+                  "required": [
+                    ""
+                  ]
+                }
+              },
+              "required": [
+                "bearer"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Refresh is OK!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Refresh is OK!"
+                },
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "bearer": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "example": "<access token>"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
             }
           },
-          "404": {
-            "description": "Not Found</br>- createdId or updatedId not found on Users!</br>- Reservation not found!",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
+          "400": {
+            "description": "Bad request:  </br>- bearer.refreshToken is required!       "
           },
-          "500": {
-            "description": "Something went wrong - reservation found on db but it couldn't be updated!",
+          "401": {
+            "description": "Unauthorized:   </br> - User not found!   </br>- Invalid Password!"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout",
+        "description": "Logout with or without token!",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "example": "Token <...tokenkey>",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Refresh is OK!",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Logout is OK!"
+                },
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "tokenDeleted": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
             }
           }
         }
@@ -1667,7 +1508,7 @@
             }
           }
         },
-        "lasttName": {
+        "lastName": {
           "type": "object",
           "properties": {
             "type": {

@@ -7,6 +7,7 @@ router.use('/users',require('./userRouter'));
 router.use('/tokens',require('./tokenRouter'));
 router.use('/cars',require('./carRouter'));
 router.use('/reservations',require('./reservationRouter'));
+router.use('/auth',require('./authRouter'));
 
 
 
