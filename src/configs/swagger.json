@@ -13,7 +13,7 @@
       "email": "ibr.seckin@gmail.com"
     }
   },
-  "host": "localhost:8000",
+  "host": "rentacar-express-api.vercel.app",
   "basePath": "/",
   "schemes": [
     "https",
@@ -1291,7 +1291,7 @@
           "Authentication"
         ],
         "summary": "Refresh token",
-        "description": "Refresh the access token with a refresh token (bearer. )!  </br></br>  request body :  {</br>bearer:{</br> : ",
+        "description": "Refresh the access token with a refresh token (bearer. )!  </br></br>  ",
         "parameters": [
           {
             "name": "authorization",
