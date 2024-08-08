@@ -13,7 +13,7 @@
       "email": "ibr.seckin@gmail.com"
     }
   },
-  "host": "localhost:8000",
+  "host": "localhost",
   "basePath": "/",
   "schemes": [
     "http",
