@@ -25,7 +25,7 @@ module.exports.reservation = {
 
     const customfilter = { userId: req.user?.userId };
 
-    if (req.user?.isAdmin === true || req.user?.isStaff === true) {
+    if (req.user?.isAdmin || req.user?.isStaff) {
       delete customfilter.userId;
     }
 

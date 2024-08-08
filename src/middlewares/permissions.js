@@ -39,7 +39,7 @@ module.exports = {
 
 
   isStafforAdmin: (req, res, next) => {
-    if (!req?.user?.isAdmin || !req?.user?.isStaff) {
+    if (!(req?.user?.isAdmin || req?.user?.isStaff)) {
       throw new CustomError(
         "AuthorizationError:Forbidden - You must be an admin or a staff user to access this resource!!",
         403
