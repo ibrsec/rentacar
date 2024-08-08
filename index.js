@@ -28,7 +28,11 @@ app.use(require("./src/middlewares/logger"));
 app.use(require("./src/middlewares/auhtentication"));
 
 //cors
-app.use(cors())
+app.use(cors()) 
+
+
+
+ 
 
 
 
