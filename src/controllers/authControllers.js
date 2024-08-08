@@ -61,7 +61,7 @@ module.exports.auth = {
       );
     }
 
-    if (!emailValidation(email)) {
+    if (email && !emailValidation(email)) {
       throw new CustomError("Invalid Email type - __@__.__", 400);
     }
     if (!passwordValidation(password)) {
