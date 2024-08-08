@@ -51,9 +51,9 @@ module.exports.user = {
                 $password: 'Password1?',
                 firstName: 'firstname',
                 lastName: 'lastname',
-                isActive:'true',
-                isStaff:'false',
-                isAdmin:'false'
+                isActive:true,
+                isStaff:false,
+                isAdmin:false
             
             }
         }
@@ -96,15 +96,19 @@ module.exports.user = {
     req.body.isAdmin = false;
     req.body.isStaff = false;
     req.body.isActive = true;
+
+
     if (req?.user?.isAdmin) {
-      if (isAdmin === true) {
+      if (isAdmin) {
         req.body.isAdmin = true;
       }
-      if (isStaff === true) {
+      if (isStaff) {
         req.body.isStaff = true;
       }
-      if (isActive === false) {
-        req.body.isActive = false;
+      if(isActive !== null){
+        if(isActive == false){
+            req.body.isActive = false;
+        }
       }
     }
 
@@ -171,9 +175,9 @@ module.exports.user = {
                 $password: 'Password1?',
                 firstName: 'firstname',
                 lastName: 'lastname',
-                isActive:'true',
-                isStaff:'false',
-                isAdmin:'false'
+                isActive: true,
+                isStaff: false,
+                isAdmin: false
             
             }
         }

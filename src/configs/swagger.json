@@ -100,16 +100,16 @@
                   "example": "lastname"
                 },
                 "isActive": {
-                  "type": "string",
-                  "example": "true"
+                  "type": "boolean",
+                  "example": true
                 },
                 "isStaff": {
-                  "type": "string",
-                  "example": "false"
+                  "type": "boolean",
+                  "example": false
                 },
                 "isAdmin": {
-                  "type": "string",
-                  "example": "false"
+                  "type": "boolean",
+                  "example": false
                 }
               },
               "required": [
@@ -245,16 +245,16 @@
                   "example": "lastname"
                 },
                 "isActive": {
-                  "type": "string",
-                  "example": "true"
+                  "type": "boolean",
+                  "example": true
                 },
                 "isStaff": {
-                  "type": "string",
-                  "example": "false"
+                  "type": "boolean",
+                  "example": false
                 },
                 "isAdmin": {
-                  "type": "string",
-                  "example": "false"
+                  "type": "boolean",
+                  "example": false
                 }
               },
               "required": [
