@@ -1,5 +1,7 @@
 # RENT A CAR API
 
+swagger: https://rentacar-express-api.vercel.app/documents/swagger
+swagger: https://rentacar-express-api.vercel.app/documents/redoc
 ### ERD:
 
 ![ERD](./erdRentACarAPI.png)
