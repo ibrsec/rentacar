@@ -1199,7 +1199,7 @@
           "Authentication"
         ],
         "summary": "Login",
-        "description": "Login with email/username and password!",
+        "description": "Login with email/username and password!</br>   adminuser: admin Aa*12345</br>",
         "parameters": [
           {
             "name": "authorization",

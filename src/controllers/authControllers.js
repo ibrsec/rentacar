@@ -14,7 +14,8 @@ module.exports.auth = {
     /*
     #swagger.tags=['Authentication']
     #swagger.summary = 'Login'
-    #swagger.description = 'Login with email/username and password!'
+    #swagger.description = 'Login with email/username and password!</br>
+                            adminuser: admin Aa*12345</br>'
     #swagger.parameters['body']={
       in:'body',
       required:true,
