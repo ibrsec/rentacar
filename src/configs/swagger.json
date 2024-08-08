@@ -13,7 +13,7 @@
       "email": "ibr.seckin@gmail.com"
     }
   },
-  "host": "localhost",
+  "host": "rentacar-express-api.vercel.app",
   "basePath": "/",
   "schemes": [
     "http",
