@@ -13,11 +13,11 @@
       "email": "ibr.seckin@gmail.com"
     }
   },
-  "host": "rentacar-express-api.vercel.app",
+  "host": "localhost:8000",
   "basePath": "/",
   "schemes": [
-    "http",
-    "https"
+    "https",
+    "http"
   ],
   "securityDefinitions": {
     "Token": {
@@ -1291,7 +1291,7 @@
           "Authentication"
         ],
         "summary": "Refresh token",
-        "description": "Refresh the access token with a refresh token (bearer. )!",
+        "description": "Refresh the access token with a refresh token (bearer. )!  </br></br>  request body :  {</br>bearer:{</br> : ",
         "parameters": [
           {
             "name": "authorization",
@@ -1301,7 +1301,6 @@
           {
             "name": "body",
             "in": "body",
-            "required": true,
             "schema": {
               "type": "object",
               "properties": {
@@ -1310,17 +1309,14 @@
                   "properties": {
                     "": {
                       "type": "string",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmIyMmJk....."
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmIxZTQ5MjAwZ..."
                     }
                   },
                   "required": [
                     ""
                   ]
                 }
-              },
-              "required": [
-                "bearer"
-              ]
+              }
             }
           }
         ],

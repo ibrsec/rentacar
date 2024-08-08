@@ -18,7 +18,7 @@ const document = {
   },
   host: `${HOST}${process.env.NODE_ENV === 'dev' ? (":"+ PORT) : ""}`,
   basePath: "/",
-  schemes: ["http", "https"],
+  schemes: ["https", "http"],
   consumes: ["application/json"],
   produces: ["application/json"],
   securityDefinitions: {

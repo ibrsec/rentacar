@@ -131,14 +131,15 @@ module.exports.auth = {
     /*
     #swagger.tags=['Authentication']
     #swagger.summary = 'Refresh token'
-    #swagger.description = 'Refresh the access token with a refresh token (bearer.refreshToken)!'
+    #swagger.description = 'Refresh the access token with a refresh token (bearer.refreshToken)!
+    </br></br>
+    '
     #swagger.parameters['body']={
       in:'body',
-      required:true,
       schema:{
-        $bearer:{
-          $refreshToken:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmIyMmJk.....'
-        } 
+        bearer:{
+          $refresh_Token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmIxZTQ5MjAwZ...'
+        }
       }
     }
 
@@ -170,18 +171,21 @@ module.exports.auth = {
     */
     const refreshToken = req.body?.bearer?.refreshToken;
     if (!refreshToken) {
-      throw new CustomError("Please enter the bearer.refreshToken!",400);
+      throw new CustomError("Please enter the bearer.refreshToken!", 400);
     }
-    const decoded = jwt.verify(refreshToken,process.env.REFRESHTOKEN_SECRETKEY);
-    if(!decoded){
-      throw new CustomError('Verify error refresh token!',401)
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.REFRESHTOKEN_SECRETKEY
+    );
+    if (!decoded) {
+      throw new CustomError("Verify error refresh token!", 401);
     }
-    const user = await User.findOne({username:decoded?.username})
-    if(!user){
-      throw new CustomError('User not found!',401)
+    const user = await User.findOne({ username: decoded?.username });
+    if (!user) {
+      throw new CustomError("User not found!", 401);
     }
-    if(decoded?.password !== user?.password){
-      throw new CustomError('Invalid password!',401)
+    if (decoded?.password !== user?.password) {
+      throw new CustomError("Invalid password!", 401);
     }
 
     const accessData = {
@@ -190,7 +194,7 @@ module.exports.auth = {
       isAdmin: user?.isAdmin,
       isActive: user?.isActive,
       isStaff: user?.isStaff,
-    }; 
+    };
 
     const accessToken = jwt.sign(
       //short
@@ -200,20 +204,16 @@ module.exports.auth = {
     );
 
     res.json({
-      error:false,
-      message:"Refresh is OK!",
-      result:{
-        bearer:{
-          accessToken
-        }
-      }
-    })
-
-
-
+      error: false,
+      message: "Refresh is OK!",
+      result: {
+        bearer: {
+          accessToken,
+        },
+      },
+    });
   },
   logout: async (req, res) => {
-
     /*
     #swagger.tags=['Authentication']
     #swagger.summary = 'Logout'
@@ -236,26 +236,14 @@ module.exports.auth = {
 
     */
 
-    const {deletedCount} = await Token.deleteOne({userId:
-      req?.user?._id
-    }) 
-
-
-
+    const { deletedCount } = await Token.deleteOne({ userId: req?.user?._id });
 
     res.json({
-      error:false,
-      message:"Logout is OK!",
-      result:{
-        tokenDeleted: deletedCount
-      }
-    })
-
-
-
-
-
-
-
+      error: false,
+      message: "Logout is OK!",
+      result: {
+        tokenDeleted: deletedCount,
+      },
+    });
   },
 };

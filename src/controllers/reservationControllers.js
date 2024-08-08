@@ -186,12 +186,16 @@ new reservation   :                 ----------
           { endDate: { $lt: req.body.startDate } },
         ],
       });
+      console.log('isAvaliableDatesAllCars=', isAvaliableDatesAllCars)
 
       const avaliableCars = await Car.find({
         _id: { $nin: isAvaliableDatesAllCars.map((item) => item.carId) },
       });
-
+      console.log('avaliableCars', avaliableCars)
+      console.log('allcars=',await Car.find());
       const avaliableCarIds = avaliableCars.map((item) => item._id);
+      console.log('avaliableCarIds', avaliableCarIds)
+
 
       res.status(400).json({
         error: true,
@@ -273,7 +277,7 @@ new reservation   :                 ----------
 
 
 
-    if (req.user?.isAdmin === false || req.user?.isStaff === false) {
+    if (!(req.user?.isAdmin || req.user?.isStaff)) {
         if(reservation?.userId !== req.user?.userId){
           throw new CustomError('User can just see the own reservations! for listing other reservations, you must be a admin or staff user!',400)
         }
