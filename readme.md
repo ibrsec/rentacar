@@ -15,7 +15,7 @@
     <img src="./logo.png" alt="Logo" width="250"   >
   </a>
 
-  <h3 align="center">Rent a Car App backend | Fullstack</h3>
+  <h3 align="center">Rent a Car App backend</h3>
 
   <p align="center">
     An awesome Rent a Car App Backend
